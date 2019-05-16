@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1557967125 source:c:\users\david\documents\computação gráfica\tp_transflinear\geometrictransformations2d\wimage.cpp
+	"wImage.h"
+	<cstdlib>
+
+1557967083 c:\users\david\documents\computação gráfica\tp_transflinear\geometrictransformations2d\wimage.h
+	<fstream>
+	<iostream>
+	<vector>
+
+1557973010 source:c:\users\david\documents\computação gráfica\tp_transflinear\geometrictransformations2d\main.cpp
+	<iostream>
+	<string>
+
