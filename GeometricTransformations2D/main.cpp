@@ -100,7 +100,7 @@ void option4(){
     std::cin >> file_name;
 }
 
-int main()
+/*int main()
 {
     while(true){
         std::cout << "\t Geometric Transformations\n\n" << std::endl;
@@ -138,5 +138,14 @@ int main()
         }
         break;
     }
+    return 0;
+}*/
+
+//Testes
+#include "transformation2D.h"
+int main(){
+    Transformation2D t2D;
+    wMatrix aux = t2D.getSher(3, 3);
+    aux.Print();
     return 0;
 }

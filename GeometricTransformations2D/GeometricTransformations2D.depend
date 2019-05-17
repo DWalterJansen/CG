@@ -12,3 +12,33 @@
 	<iostream>
 	<string>
 
+1558071821 source:c:\users\david\documents\github\cg\geometrictransformations2d\main.cpp
+	<iostream>
+	<string>
+
+1557967125 source:c:\users\david\documents\github\cg\geometrictransformations2d\wimage.cpp
+	"wImage.h"
+	<cstdlib>
+
+1557967083 c:\users\david\documents\github\cg\geometrictransformations2d\wimage.h
+	<fstream>
+	<iostream>
+	<vector>
+
+1558067949 source:c:\users\david\documents\github\cg\geometrictransformations2d\wmatrix.cpp
+	"wMatrix.h"
+
+1558067839 c:\users\david\documents\github\cg\geometrictransformations2d\wmatrix.h
+	<assert.h>
+	<math.h>
+	<stdio.h>
+	<stdlib.h>
+
+1558072079 source:c:\users\david\documents\github\cg\geometrictransformations2d\transformation2d.cpp
+	"transformation2D.h"
+	<iostream>
+	<cmath>
+
+1558072402 c:\users\david\documents\github\cg\geometrictransformations2d\transformation2d.h
+	"wMatrix.h"
+

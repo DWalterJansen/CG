@@ -33,8 +33,12 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="main.cpp" />
+		<Unit filename="transformation2D.cpp" />
+		<Unit filename="transformation2D.h" />
 		<Unit filename="wImage.cpp" />
 		<Unit filename="wImage.h" />
+		<Unit filename="wMatrix.cpp" />
+		<Unit filename="wMatrix.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
