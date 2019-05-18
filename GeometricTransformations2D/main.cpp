@@ -158,7 +158,7 @@ int main()
                     break;
 
                 default:
-                    std::cout << red <<"Invalid Choice. Enter a no between 1 and 4" << def << std::endl;
+                    std::cout << red <<"Invalid Choice. Enter a number between 1 and 5" << def << std::endl;
                     break;
             }
         }while(!('0' < option && option < '6'));
