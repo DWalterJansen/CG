@@ -1,0 +1,16 @@
+CG step by step:
+	### Parte Fácil
+	1) Menu para depois inserir as funções OK
+	2) iniciar classe de transformação 2D OK
+	3) validação de entrada do usuário OK
+	4) criar matrizes para cada transformação OK
+	5) Estudar bibliotecas para ler e escrever imagem OK
+	6) método para gerar única matriz de composição OK
+	
+	### Pate Díficil
+	7) função de mapeamento para as (4 extremidades) ---
+	8) formas de mapeamento reverso: 2 formas ---
+	9) Realizar testes ---
+	
+	### Fácil
+	10) Remontar o menu com as chamadas de função ---
