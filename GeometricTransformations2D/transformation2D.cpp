@@ -41,3 +41,10 @@ wMatrix Transformation2D::getSher(double shx, double shy){
     double sh[3][3] = {{1, shx, 0},{shy, 1, 0}, {0, 0, 1}};
     return wMatrix(sh);
 }
+
+void Transformation2D::composition(const wMatrix &m){
+    //utiliza a matriz base, e multiplica à esquerda a matriz de transformação
+    wMatrix internal = mt;
+    wMatrix external = m;
+    mt = external * internal;
+}

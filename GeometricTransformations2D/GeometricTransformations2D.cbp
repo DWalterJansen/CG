@@ -32,6 +32,9 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="colormod.h" />
+		<Unit filename="image.cpp" />
+		<Unit filename="image.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="transformation2D.cpp" />
 		<Unit filename="transformation2D.h" />

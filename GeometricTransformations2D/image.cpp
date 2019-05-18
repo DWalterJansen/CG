@@ -30,42 +30,49 @@ void Le_Imagem(Imagem *Fonte, const char *NomeArq){
     strcpy(Comentario,"Imagem não possui comentário\n");
 
 
-
 /* Le e atribui pixels */
-    if (!strncmp(Fonte->tipo,"P2",2)){           // PGM formato ASC
-//printf("\n Tipo PGM ASC\n\n");
-      Fonte->pixel = alocapixels(Fonte->horizontal, Fonte->vertical);
-      for (y=0;y<Fonte->vertical;y++)
-	for (x=0;x<Fonte->horizontal;x++){
-	   fscanf(fp,"%ld",&aux);
-	   Fonte->pixel[x][y]=aux;
-	}
+    if (!strncmp(Fonte->tipo,"P2",2))
+    {
+        // PGM formato ASC
+        //printf("\n Tipo PGM ASC\n\n");
+        Fonte->pixel = alocapixels(Fonte->horizontal, Fonte->vertical);
+        for (y=0; y<Fonte->vertical; y++)
+            for (x=0; x<Fonte->horizontal; x++)
+            {
+                fscanf(fp,"%ld",&aux);
+                Fonte->pixel[x][y]=aux;
+            }
     }
 
-    else if (!strncmp(Fonte->tipo,"P3",2)){      // PPM formato ASC
-//printf("\n Tipo PPM ASC\n\n");
-      Fonte->pixel = alocapixels(3*Fonte->horizontal, Fonte->vertical);
-      for (y=0;y<Fonte->vertical;y++)
-	for (x=0;x<3*Fonte->horizontal;x++){
-	   fscanf(fp,"%ld",&aux);
-	   Fonte->pixel[x][y]=aux;               // Red, Green e Blue
-	}
+    else if (!strncmp(Fonte->tipo,"P3",2))
+    {
+        // PPM formato ASC
+        //printf("\n Tipo PPM ASC\n\n");
+        Fonte->pixel = alocapixels(3*Fonte->horizontal, Fonte->vertical);
+        for (y=0; y<Fonte->vertical; y++)
+            for (x=0; x<3*Fonte->horizontal; x++)
+            {
+                fscanf(fp,"%ld",&aux);
+                Fonte->pixel[x][y]=aux;               // Red, Green e Blue
+            }
     }
 
-    else if (!strncmp(Fonte->tipo,"P5",2)){	 // PGM formato raw
-//printf("\n Tipo PGM RAW\n\n");
-      Fonte->pixel = alocapixels(Fonte->horizontal, Fonte->vertical);
-      for (y=0;y<Fonte->vertical;y++)
-	for (x=0;x<Fonte->horizontal;x++)
-	   Fonte->pixel[x][y]=getc(fp);
+    else if (!strncmp(Fonte->tipo,"P5",2))
+    {
+        // PGM formato raw
+        //printf("\n Tipo PGM RAW\n\n");
+        Fonte->pixel = alocapixels(Fonte->horizontal, Fonte->vertical);
+        for (y=0; y<Fonte->vertical; y++)
+            for (x=0; x<Fonte->horizontal; x++)
+                Fonte->pixel[x][y]=getc(fp);
     }
-
-    else if (!strncmp(Fonte->tipo,"P6",2)){	 // PPM formato raw
-//printf("\n Tipo PPM RAW\n\n");
-      Fonte->pixel = alocapixels(3*Fonte->horizontal, Fonte->vertical);
-      for (y=0;y<Fonte->vertical;y++)
-	for (x=0;x<3*Fonte->horizontal;x++)
-	  Fonte->pixel[x][y]=getc(fp);           // Red, Green e Blue
+    else if (!strncmp(Fonte->tipo,"P6",2)) 	 // PPM formato raw
+    {
+        //printf("\n Tipo PPM RAW\n\n");
+        Fonte->pixel = alocapixels(3*Fonte->horizontal, Fonte->vertical);
+        for (y=0; y<Fonte->vertical; y++)
+            for (x=0; x<3*Fonte->horizontal; x++)
+                Fonte->pixel[x][y]=getc(fp);           // Red, Green e Blue
     }
 
     fclose(fp);
@@ -123,7 +130,7 @@ void Escreve_Imagem(Imagem Fonte, const char *NomeArq){
 }/* Fim Escreve_imagem */
 
 // tá com erro: o correto seria (width, height)
-unsigned char **alocapixels(long width, long height){
+unsigned char **alocapixels(long height, long width){
 	long i;
 
 	unsigned char **m;

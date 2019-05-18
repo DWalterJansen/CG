@@ -73,7 +73,6 @@ void wImage::write(const string& arq) const
     }
 
     file.close();
-
 }
 /// retorna o pixel RGB da posição (linha, coluna)
 RGB& wImage::get(unsigned int linha, unsigned int coluna)

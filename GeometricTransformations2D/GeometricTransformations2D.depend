@@ -12,12 +12,17 @@
 	<iostream>
 	<string>
 
-1558137955 source:c:\users\david\documents\github\cg\geometrictransformations2d\main.cpp
+1558184667 source:c:\users\david\documents\github\cg\geometrictransformations2d\main.cpp
 	<iostream>
 	<string>
 	"colormod.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"image.h"
+	"wMatrix.h"
 
-1557967125 source:c:\users\david\documents\github\cg\geometrictransformations2d\wimage.cpp
+1558182645 source:c:\users\david\documents\github\cg\geometrictransformations2d\wimage.cpp
 	"wImage.h"
 	<cstdlib>
 
@@ -35,7 +40,7 @@
 	<stdio.h>
 	<stdlib.h>
 
-1558072079 source:c:\users\david\documents\github\cg\geometrictransformations2d\transformation2d.cpp
+1558185715 source:c:\users\david\documents\github\cg\geometrictransformations2d\transformation2d.cpp
 	"transformation2D.h"
 	<iostream>
 	<cmath>
@@ -48,4 +53,12 @@
 
 1558134120 c:\users\david\documents\github\cg\geometrictransformations2d\colormod.h
 	<ostream>
+
+1558183560 source:c:\users\david\documents\github\cg\geometrictransformations2d\image.cpp
+	"image.h"
+
+1558139902 c:\users\david\documents\github\cg\geometrictransformations2d\image.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
 

@@ -4,8 +4,9 @@
 ///////////////////////////////////////////////////////////////////
 #include <iostream>
 #include <string>
+#include "transformation2D.h"
 #include "colormod.h"
-
+/*
 Color::Modifier red(Color::FG_RED);
 Color::Modifier blue(Color::FG_BLUE);
 Color::Modifier def(Color::FG_DEFAULT);
@@ -68,7 +69,7 @@ void option2(){
                     break;
 
                 default:
-                    std::cout << "\tInvalid Choice. Enter a, b, c or d" << std::endl;
+                    std::cout << red << "\tInvalid Choice. Enter a, b, c or d" << def <<std::endl;
                     break;
             }
         }while(!('a' <= code && code <= 'd'));
@@ -176,4 +177,68 @@ int main()
     }
 
     return 0;
+}*/
+
+
+///teste das funções de leitura e escrita de imagens no formato PPM
+/*
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "image.h"
+#include "wMatrix.h"
+
+
+int main(int argc, char *argv[])
+{
+    Imagem Img, Img_dest;
+    Le_Imagem(&Img, "car_raw.ppm" );
+    float sx = 0.7, sy = 0.7;
+
+    int altura = (int)(sx*Img.vertical),
+        largura = (int)(sy*Img.horizontal);
+    strcpy(Img_dest.tipo,Img.tipo);
+    Img_dest.horizontal = largura;
+    Img_dest.vertical = altura;
+    Img_dest.pixel = alocapixels(largura*3, altura);
+
+    // imagem não foi lida!!!
+    if ( Img.pixel == NULL )
+        exit(0);
+
+
+
+    wMatrix S;
+    S.Eye();
+    S[0][0]=sx;
+    S[1][1] = sy;
+    S = S.Inv();
+
+    int i, j;
+    for(i=0; i< Img_dest.horizontal; i++) // é usado 3*horizontal porque a imagem é colorida
+        for( j=0; j<Img_dest.vertical; j++ )
+        {
+            wVector P, Q;
+            P[0] = i;
+            P[1] = j;
+            P[2] = 1;
+            Q = S*P;
+            Img_dest.pixel[i*3][j] = Img.pixel[int(Q[0]+0.5)*3][int(Q[1]+0.5)];  //banda red
+            Img_dest.pixel[i*3+1][j] = Img.pixel[int(Q[0]+0.5)*3+1][int(Q[1]+0.5)];  //banda green
+            Img_dest.pixel[i*3+2][j] = Img.pixel[int(Q[0]+0.5)*3+2][int(Q[1]+0.5)];  //banda blue
+        }
+    Escreve_Imagem(Img_dest, "car_reduzido.ppm" );
+    system("PAUSE");
+    return 0;
 }
+*/
+
+///Teste Composição
+/*int main(){
+    Transformation2D t2d;
+    t2d.composition(t2d.getScale(2,2));
+    t2d.composition(t2d.getSher(3,3));
+    t2d.getMT().Print();
+    return 0;
+}
+*/
