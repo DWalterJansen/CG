@@ -13,6 +13,8 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
+#include <iostream>
 
 class wVector
 {
@@ -91,7 +93,7 @@ class wMatrix:public wVector
 
         wMatrix operator/( const double& );
 
-        void Print() const;
+        void Print(std::string symbol) const;
 };
 
 #endif

@@ -7,6 +7,10 @@ class Transformation2D{
     private:
         //Matriz para as composição de transformação
         wMatrix mt;
+        double correctionX;
+        double correctionY;
+        int newWidth;
+        int newHeight;
 
     public:
         Transformation2D(){
@@ -14,6 +18,8 @@ class Transformation2D{
         };
         wMatrix getMT(){return mt;};
         //translation
+        double getcorrectionX(){return correctionX;}
+        double getcorrectionY(){return correctionY;}
         wMatrix getTranslation(double tx, double ty);
         //rotation
         wMatrix getRotation(double theta);
@@ -24,6 +30,9 @@ class Transformation2D{
 
         //composição
         void composition(const wMatrix &m);
+        void mapDimension(int width, int height);
+        void reset();
+        ~Transformation2D(){};
 };
 
 #endif // TRANSFORMATION2D_H_INCLUDED

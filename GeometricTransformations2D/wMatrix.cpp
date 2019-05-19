@@ -113,10 +113,11 @@ wVector wVector::Cross(wVector u)
     return aux;
 }
 /*-----------------------------------------------------------------*/
-void wMatrix::Print() const
+void wMatrix::Print(std::string symbol) const
 {
     for (int i=0; i<3; i++)
     {
+        std::cout << symbol;
         elem[i].Print();
         printf("\n");
     }

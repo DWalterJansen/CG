@@ -48,3 +48,43 @@ void Transformation2D::composition(const wMatrix &m){
     wMatrix external = m;
     mt = external * internal;
 }
+
+//Calculate new dimension of transformed image
+void Transformation2D::mapDimension(int width, int height){
+    // points like: (x, y, 1)
+    wVector leftUp(0, height-1, 1);
+    wVector rightUp(width-1, height-1, 1);
+    wVector leftDw(0, 0, 1);
+    wVector rightDw(width, 0, 1);
+
+    // new points
+    wVector TleftUp = mt * leftUp;
+    wVector TrightUp = mt * rightUp;
+    wVector TleftDw = mt * leftDw;
+    wVector TrightDw = mt *rightDw;
+
+    double minX, maxX, minY, maxY;
+    minX = std::min(std::min(TleftUp[0], TrightUp[0]), std::min(TleftDw[0], TrightDw[0]));
+    maxX = std::max(std::max(TleftUp[0], TrightUp[0]), std::max(TleftDw[0], TrightDw[0]));
+    minY = std::min(std::min(TleftUp[1], TrightUp[1]), std::min(TleftDw[1], TrightDw[1]));
+    maxY = std::max(std::max(TleftUp[1], TrightUp[1]), std::max(TleftDw[1], TrightDw[1]));
+
+    // Retirar depois esse comentátio
+    // Lógica usada: Estabelecendo a diferença máxima entre o X e Y, é possível saber o
+    //  tamanho da nova imagem.
+    newWidth = abs(maxX - minX) + 1;
+    newHeight = abs(maxY - minY) + 1;
+
+    // Retirar depois esse comentátio
+    //Com base na transformação da imagem, é possível fazer uma comparação entre
+    // o ponto de inicio da imagem base e da imagem transformada.
+    //Isso permite gerar fatores de translação para que a nova imagem aparece completamente.
+    correctionX = 0 - minX;
+    correctionY = height-1 - maxY;
+}
+
+void Transformation2D::reset(){
+    mt = mt.Eye();
+    correctionX = 0;
+    correctionY = 0;
+}
