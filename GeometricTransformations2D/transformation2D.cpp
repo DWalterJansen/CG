@@ -52,8 +52,8 @@ void Transformation2D::composition(const wMatrix &m){
 //Calculate new dimension of transformed image
 void Transformation2D::mapDimension(int width, int height){
     // points like: (x, y, 1)
-    wVector leftUp(0, height-1, 1);
-    wVector rightUp(width-1, height-1, 1);
+    wVector leftUp(0, height, 1);
+    wVector rightUp(width, height, 1);
     wVector leftDw(0, 0, 1);
     wVector rightDw(width, 0, 1);
 
@@ -72,15 +72,8 @@ void Transformation2D::mapDimension(int width, int height){
     // Retirar depois esse comentátio
     // Lógica usada: Estabelecendo a diferença máxima entre o X e Y, é possível saber o
     //  tamanho da nova imagem.
-    newWidth = abs(maxX - minX) + 1;
-    newHeight = abs(maxY - minY) + 1;
-
-    // Retirar depois esse comentátio
-    //Com base na transformação da imagem, é possível fazer uma comparação entre
-    // o ponto de inicio da imagem base e da imagem transformada.
-    //Isso permite gerar fatores de translação para que a nova imagem aparece completamente.
-    correctionX = 0 - minX;
-    correctionY = height-1 - maxY;
+    newWidth = round(abs(maxX - minX));
+    newHeight = round(abs(maxY - minY));
 }
 
 void Transformation2D::reset(){

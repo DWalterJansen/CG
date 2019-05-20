@@ -21,6 +21,29 @@ void clear_screen(){
     #endif
 }
 
+bool is_number(const std::string& s)
+{
+    std::string::const_iterator it = s.begin();
+    while (it != s.end() && std::isdigit(*it)) ++it;
+    return !s.empty() && it == s.end();
+}
+
+bool is_float(const std::string& s)
+{
+    std::string::const_iterator it = s.begin();
+    int accumulator = 0;
+    while (it != s.end()){
+        if( *it == '.' && accumulator == 0)
+            accumulator++;
+        else{
+            if(!std::isdigit(*it) || accumulator == 2)
+                break;
+        }
+        ++it;
+    }
+    return !s.empty() && it == s.end();
+}
+
 void option1(std::string &nameImage){
     clear_screen();
     std::cout << "\tGeometric Transformations\n\n" << std::endl;
@@ -40,10 +63,15 @@ void option2(Transformation2D &t2d){
     std::cout << "\t c - Scale" << std::endl;
     std::cout << "\t d - Shear" << std::endl;
 
-    std::cout << "\n Give a number of transformations: ";
     int number;
-    std::cin >> number;
-    std::cin.sync();
+    std::string s;
+    do{
+        std::cout << "\n Give a number of transformations: ";
+        std::cin >> s;
+        std::cin.sync();
+    }while(!is_number(s));
+    number = std::stoi(s);
+
 
     std::cout << "\n For each transformation, enter the letter code... " << std::endl;
     char code;
@@ -122,6 +150,7 @@ void option2(Transformation2D &t2d){
         }while(!('a' <= code && code <= 'd'));
         std::cout << "\n Press any key to return to the home menu...";
         std::cin.get();
+        std::cin.sync();
     }
 }
 
@@ -154,9 +183,12 @@ void option3(std::string &typeSimpling){
                 break;
         }
     }while(!('a' <= code && code <= 'b'));
+    std::cout << "\n Press any key to return to the home menu...";
+    std::cin.get();
+    std::cin.sync();
 }
 
-void option4(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d){
+void option4(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d, std::string &nameImage){
     clear_screen();
     std::cout << "\t Geometric Transformations\n\n" << std::endl;
     std::cout << " 4 - Perform transformation and save new image" << std::endl;
@@ -166,9 +198,34 @@ void option4(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d){
     file_name = file_name + ".ppm";
     std::cin.sync();
 
-    /*
-        ESCREVER FUNÇÃO DE SALVAR
-    */
+    ///Parte Semelhante ao que Wagner Fez
+    Le_Imagem(&Img, nameImage.c_str());
+    strcpy(Img_dest.tipo,Img.tipo);
+
+    ///Calcula novo tamanho
+    t2d.mapDimension(Img.horizontal, Img.vertical);
+    Img_dest.horizontal = t2d.getNewWidth();
+    Img_dest.vertical = t2d.getNewHeight();
+    Img_dest.pixel = alocapixels(3*t2d.getNewWidth(), t2d.getNewHeight());
+
+    ///Relação entre sistemas de matriz e euclidiano;
+    ///Ida
+    wMatrix m2e = t2d.getScale(-1, 1);
+    m2e = t2d.getTranslation(-Img.vertical, 0) * m2e;
+
+    ///Volta
+    wMatrix e2m = t2d.getTranslation(Img.vertical, 0);
+    e2m = t2d.getScale(-1, 1) * e2m;
+
+
+    // imagem não foi lida!!!
+    if ( Img.pixel == NULL )
+        exit(0);
+
+    wMatrix S;
+    S = e2m * S * m2e;
+    S = t2d.getMT().Inv();
+    Escreve_Imagem(Img_dest, file_name.c_str());
 }
 
 int main()
@@ -218,7 +275,7 @@ int main()
 
                 case '4':
                     std::cout << "You choose 4";
-                    option4(Img, Img_dest, t2d);
+                    option4(Img, Img_dest, t2d, nameImage);
                     break;
 
                 case '5':
@@ -234,66 +291,3 @@ int main()
 
     return 0;
 }
-
-
-///teste das funções de leitura e escrita de imagens no formato PPM
-/*#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "image.h"
-#include "wMatrix.h"
-
-
-int main(int argc, char *argv[])
-{
-    Imagem Img, Img_dest;
-    Le_Imagem(&Img, "car_raw.ppm" );
-    float sx = 0.7, sy = 0.7;
-
-    int altura = (int)(sx*Img.vertical),
-        largura = (int)(sy*Img.horizontal);
-    strcpy(Img_dest.tipo,Img.tipo);
-    Img_dest.horizontal = largura;
-    Img_dest.vertical = altura;
-    Img_dest.pixel = alocapixels(largura*3, altura);
-
-    // imagem não foi lida!!!
-    if ( Img.pixel == NULL )
-        exit(0);
-
-
-
-    wMatrix S;
-    S.Eye();
-    S[0][0] = sx;
-    S[1][1] = sy;
-    S = S.Inv();
-
-    int i, j;
-    for(i=0; i< Img_dest.horizontal; i++) // é usado 3*horizontal porque a imagem é colorida
-        for( j=0; j<Img_dest.vertical; j++ )
-        {
-            wVector P, Q;
-            P[0] = i;
-            P[1] = j;
-            P[2] = 1;
-            Q = S*P;
-            Img_dest.pixel[i*3][j] = Img.pixel[int(Q[0]+0.5)*3][int(Q[1]+0.5)];  //banda red
-            Img_dest.pixel[i*3+1][j] = Img.pixel[int(Q[0]+0.5)*3+1][int(Q[1]+0.5)];  //banda green
-            Img_dest.pixel[i*3+2][j] = Img.pixel[int(Q[0]+0.5)*3+2][int(Q[1]+0.5)];  //banda blue
-        }
-    Escreve_Imagem(Img_dest, "car_reduzido.ppm" );
-    system("PAUSE");
-    return 0;
-}*/
-
-
-///Teste Composição
-/*int main(){
-    Transformation2D t2d;
-    t2d.composition(t2d.getScale(2,2));
-    t2d.composition(t2d.getSher(3,3));
-    t2d.getMT().Print();
-    return 0;
-}
-*/

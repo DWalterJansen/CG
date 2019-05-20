@@ -20,6 +20,8 @@ class Transformation2D{
         //translation
         double getcorrectionX(){return correctionX;}
         double getcorrectionY(){return correctionY;}
+        int getNewWidth(){return newWidth;}
+        int getNewHeight(){return newHeight;}
         wMatrix getTranslation(double tx, double ty);
         //rotation
         wMatrix getRotation(double theta);

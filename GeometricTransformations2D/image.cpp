@@ -14,12 +14,13 @@ void Le_Imagem(Imagem *Fonte, const char *NomeArq){
 
     FILE *fp;
     char Comentario[80];
-    long x,y,aux,max;
+    long x,y,max;
 
     /* Le, atribui e imprime cabeçalho */
-    if((fp=fopen(NomeArq,"rb"))==NULL){
-	 printf("O arquivo %s não pode ser lido.\n",NomeArq);
-	 exit(1);
+    if((fp=fopen(NomeArq,"rb"))==NULL)
+    {
+        printf("O arquivo %s não pode ser lido.\n",NomeArq);
+        exit(1);
     }
     fgets(Fonte->tipo,80,fp);
     fgets(Comentario,80,fp);
@@ -31,48 +32,13 @@ void Le_Imagem(Imagem *Fonte, const char *NomeArq){
 
 
 /* Le e atribui pixels */
-    if (!strncmp(Fonte->tipo,"P2",2))
+    if (!strncmp(Fonte->tipo,"P6",2)) 	 // PPM formato raw
     {
-        // PGM formato ASC
-        //printf("\n Tipo PGM ASC\n\n");
-        Fonte->pixel = alocapixels(Fonte->horizontal, Fonte->vertical);
-        for (y=0; y<Fonte->vertical; y++)
-            for (x=0; x<Fonte->horizontal; x++)
-            {
-                fscanf(fp,"%ld",&aux);
-                Fonte->pixel[x][y]=aux;
-            }
-    }
-
-    else if (!strncmp(Fonte->tipo,"P3",2))
-    {
-        // PPM formato ASC
-        //printf("\n Tipo PPM ASC\n\n");
         Fonte->pixel = alocapixels(3*Fonte->horizontal, Fonte->vertical);
-        for (y=0; y<Fonte->vertical; y++)
-            for (x=0; x<3*Fonte->horizontal; x++)
-            {
-                fscanf(fp,"%ld",&aux);
-                Fonte->pixel[x][y]=aux;               // Red, Green e Blue
-            }
-    }
-
-    else if (!strncmp(Fonte->tipo,"P5",2))
-    {
-        // PGM formato raw
-        //printf("\n Tipo PGM RAW\n\n");
-        Fonte->pixel = alocapixels(Fonte->horizontal, Fonte->vertical);
-        for (y=0; y<Fonte->vertical; y++)
-            for (x=0; x<Fonte->horizontal; x++)
-                Fonte->pixel[x][y]=getc(fp);
-    }
-    else if (!strncmp(Fonte->tipo,"P6",2)) 	 // PPM formato raw
-    {
-        //printf("\n Tipo PPM RAW\n\n");
-        Fonte->pixel = alocapixels(3*Fonte->horizontal, Fonte->vertical);
-        for (y=0; y<Fonte->vertical; y++)
-            for (x=0; x<3*Fonte->horizontal; x++)
-                Fonte->pixel[x][y]=getc(fp);           // Red, Green e Blue
+        for (y=0; y < Fonte->vertical; y++){
+            for (x=0; x < 3*Fonte->horizontal; x++)
+                Fonte->pixel[y][x] = getc(fp);           // Red, Green e Blue
+        }
     }
 
     fclose(fp);
@@ -82,55 +48,34 @@ void Le_Imagem(Imagem *Fonte, const char *NomeArq){
 
 /* Funcao "Escreve_Imagem". escreve a imagem a partir da estrutura Fonte */
 
-void Escreve_Imagem(Imagem Fonte, const char *NomeArq){
+void Escreve_Imagem(Imagem Fonte, const char *NomeArq)
+{
 
-  FILE *fp;
-  long x,y;
+    FILE *fp;
+    long x,y;
 
-  if((fp=fopen(NomeArq,"wb"))==NULL){
-	 printf("O arquivo não pode ser criado.\n");
-	 exit(1);
-  }
-
-  // Escreve imagem conforme o tipo
-
-  if (!strncmp(Fonte.tipo,"P2",2)){              // PGM formato ASC
-    fprintf(fp,"%s%ld %ld\n%d\n",Fonte.tipo,Fonte.horizontal,Fonte.vertical,255);
-      for (y=0;y<Fonte.vertical;y++)
-	 for (x=0;x<Fonte.horizontal;x++)
-	   fprintf(fp,"%d ",Fonte.pixel[x][y]);
-  }
-
-  else if (!strncmp(Fonte.tipo,"P3",2)){         // PPM formato ASC
-    fprintf(fp,"%s%ld %ld\n%d\n",Fonte.tipo,Fonte.horizontal,Fonte.vertical,255);
-       for (y=0;y<Fonte.vertical;y++)
-	 for (x=0;x<3*Fonte.horizontal;x++){
-	   fprintf(fp,"%d ",Fonte.pixel[x][y]);    // Red, Green e Blue
-	 }
-  }
-
-  else if (!strncmp(Fonte.tipo,"P5",2)){         // PGM formato raw
-    fprintf(fp,"%s%ld %ld\n%d\n",Fonte.tipo,Fonte.horizontal,Fonte.vertical,255);
-       for (y=0;y<Fonte.vertical;y++)
-	  for (x=0;x<Fonte.horizontal;x++)
-	     fputc(Fonte.pixel[x][y],fp);
+    if((fp=fopen(NomeArq,"wb"))==NULL)
+    {
+        printf("O arquivo não pode ser criado.\n");
+        exit(1);
     }
 
-  else if (!strncmp(Fonte.tipo,"P6",2)){         // PPM formato raw
-    fprintf(fp,"%s%ld %ld\n%d\n",Fonte.tipo,Fonte.horizontal,Fonte.vertical,255);
-       for (y=0;y<Fonte.vertical;y++)
-	  for (x=0;x<3*Fonte.horizontal;x++)
-	     fputc(Fonte.pixel[x][y],fp);
-       //fprintf(fp,"");
+    /*Escreve imagem conforme o tipo*/
 
+    if (!strncmp(Fonte.tipo,"P6",2))          // PPM formato raw
+    {
+        fprintf(fp,"%s%ld %ld\n%d\n",Fonte.tipo,Fonte.horizontal,Fonte.vertical,255);
+        for(y=0 ; y < Fonte.vertical; y++){
+            for(x=0; x< 3*Fonte.horizontal; x++)
+                fputc(Fonte.pixel[y][x],fp);
+        }
     }
 
-  fclose(fp);
+    fclose(fp);
 
 }/* Fim Escreve_imagem */
 
-// tá com erro: o correto seria (width, height)
-unsigned char **alocapixels(long height, long width){
+unsigned char **alocapixels(long width, long height){
 	long i;
 
 	unsigned char **m;
@@ -151,6 +96,12 @@ unsigned char **alocapixels(long height, long width){
 	   exit(0);
 	  }
 
+	}
+
+	int j;
+	for(i = 0; i < height; i++){
+        for(j = 0; j < width; j++)
+            m[i][j] = (char) 0;
 	}
 
 	//retorna m
