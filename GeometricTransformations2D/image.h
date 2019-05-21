@@ -1,5 +1,3 @@
-#ifndef IMAGE_H_INCLUDED
-#define IMAGE_H_INCLUDED
 /*****************************************************************************
  * Arquivo: image.h
  * Descrição: Definição de um TAD em C para manipulação de imagens PPM e PGM
@@ -25,5 +23,4 @@ typedef struct {
 /* --------------------- Declaracao de Funcoes -----------------------*/
 void Le_Imagem(Imagem *Fonte, const char *NomeArq);
 void Escreve_Imagem(Imagem Fonte, const char *NomeArq);
-unsigned char **alocapixels(long height, long width);
-#endif // IMAGE_H_INCLUDED
+unsigned char **alocapixels(long width, long height);

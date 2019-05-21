@@ -6,22 +6,25 @@
 class Transformation2D{
     private:
         //Matriz para as composição de transformação
-        wMatrix mt;
-        double correctionX;
-        double correctionY;
-        int newWidth;
-        int newHeight;
+        wMatrix mt_show;
+        wMatrix mt_real;
+        long newWidth;
+        long newHeight;
 
     public:
         Transformation2D(){
-            mt = mt.Eye();
+            mt_show = mt_show.Eye();
+            mt_real = mt_real.Eye();
         };
-        wMatrix getMT(){return mt;};
+        wMatrix getMT_Show(){return mt_show;};
+        wMatrix getMT_Real(){return mt_real;};
+        //Geters
+        long getNewWidth(){return newWidth;}
+        long getNewHeight(){return newHeight;}
+        //Setters
+        void setNewWidth(long newWidth){this->newWidth = newWidth;}
+        void setNewHeight(long newHeight){this->newHeight = newHeight;}
         //translation
-        double getcorrectionX(){return correctionX;}
-        double getcorrectionY(){return correctionY;}
-        int getNewWidth(){return newWidth;}
-        int getNewHeight(){return newHeight;}
         wMatrix getTranslation(double tx, double ty);
         //rotation
         wMatrix getRotation(double theta);
@@ -32,7 +35,6 @@ class Transformation2D{
 
         //composição
         void composition(const wMatrix &m);
-        void mapDimension(int width, int height);
         void reset();
         ~Transformation2D(){};
 };

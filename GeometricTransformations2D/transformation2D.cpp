@@ -44,40 +44,12 @@ wMatrix Transformation2D::getSher(double shx, double shy){
 
 void Transformation2D::composition(const wMatrix &m){
     //utiliza a matriz base, e multiplica à esquerda a matriz de transformação
-    wMatrix internal = mt;
+    wMatrix internal = mt_show;
     wMatrix external = m;
-    mt = external * internal;
-}
-
-//Calculate new dimension of transformed image
-void Transformation2D::mapDimension(int width, int height){
-    // points like: (x, y, 1)
-    wVector leftUp(0, height, 1);
-    wVector rightUp(width, height, 1);
-    wVector leftDw(0, 0, 1);
-    wVector rightDw(width, 0, 1);
-
-    // new points
-    wVector TleftUp = mt * leftUp;
-    wVector TrightUp = mt * rightUp;
-    wVector TleftDw = mt * leftDw;
-    wVector TrightDw = mt *rightDw;
-
-    double minX, maxX, minY, maxY;
-    minX = std::min(std::min(TleftUp[0], TrightUp[0]), std::min(TleftDw[0], TrightDw[0]));
-    maxX = std::max(std::max(TleftUp[0], TrightUp[0]), std::max(TleftDw[0], TrightDw[0]));
-    minY = std::min(std::min(TleftUp[1], TrightUp[1]), std::min(TleftDw[1], TrightDw[1]));
-    maxY = std::max(std::max(TleftUp[1], TrightUp[1]), std::max(TleftDw[1], TrightDw[1]));
-
-    // Retirar depois esse comentátio
-    // Lógica usada: Estabelecendo a diferença máxima entre o X e Y, é possível saber o
-    //  tamanho da nova imagem.
-    newWidth = round(abs(maxX - minX));
-    newHeight = round(abs(maxY - minY));
+    mt_show = external * internal;
 }
 
 void Transformation2D::reset(){
-    mt = mt.Eye();
-    correctionX = 0;
-    correctionY = 0;
+    mt_show = mt_show.Eye();
+    mt_real = mt_real.Eye();
 }

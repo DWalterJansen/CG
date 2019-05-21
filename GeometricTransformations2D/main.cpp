@@ -44,7 +44,7 @@ bool is_float(const std::string& s)
     return !s.empty() && it == s.end();
 }
 
-void option1(std::string &nameImage){
+void option1(std::string &nameImage, Imagem &Img, Transformation2D &t2d){
     clear_screen();
     std::cout << "\tGeometric Transformations\n\n" << std::endl;
     std::cout << " 1 - Read image" << std::endl;
@@ -52,6 +52,11 @@ void option1(std::string &nameImage){
     std::cin >> nameImage;
     nameImage = nameImage + ".ppm";
     std::cin.sync();
+    t2d.reset();
+    Le_Imagem(&Img, nameImage.c_str());
+    //Devido à transposiçao da matriz na leitura
+    t2d.setNewHeight(3*Img.horizontal);
+    t2d.setNewWidth(Img.vertical);
 }
 
 void option2(Transformation2D &t2d){
@@ -93,7 +98,7 @@ void option2(Transformation2D &t2d){
                     std::cin.sync();
                     std::cout << blue;
                     t2d.composition(t2d.getTranslation(tx, ty));
-                    t2d.getMT().Print("\t\t");
+                    t2d.getMT_Show().Print("\t\t");
                     std::cout << def;
                     break;
 
@@ -107,7 +112,7 @@ void option2(Transformation2D &t2d){
                     }while(!(0 <= theta && theta <= 360.0));
                     t2d.composition(t2d.getRotation(theta));
                     std::cout << blue;
-                    t2d.getMT().Print("\t\t");
+                    t2d.getMT_Show().Print("\t\t");
                     std::cout << def;
                     break;
 
@@ -123,7 +128,7 @@ void option2(Transformation2D &t2d){
                     std::cin.sync();
                     std::cout << blue;
                     t2d.composition(t2d.getScale(sx, sy));
-                    t2d.getMT().Print("\t\t");
+                    t2d.getMT_Show().Print("\t\t");
                     std::cout << def;
                     break;
 
@@ -139,7 +144,7 @@ void option2(Transformation2D &t2d){
                     std::cin.sync();
                     std::cout << blue;
                     t2d.composition(t2d.getSher(shx, shy));
-                    t2d.getMT().Print("\t\t");
+                    t2d.getMT_Show().Print("\t\t");
                     std::cout << def;
                     break;
 
@@ -188,7 +193,7 @@ void option3(std::string &typeSimpling){
     std::cin.sync();
 }
 
-void option4(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d, std::string &nameImage){
+void option4(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d){
     clear_screen();
     std::cout << "\t Geometric Transformations\n\n" << std::endl;
     std::cout << " 4 - Perform transformation and save new image" << std::endl;
@@ -197,35 +202,6 @@ void option4(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d, std::string &
     std::cin >> file_name;
     file_name = file_name + ".ppm";
     std::cin.sync();
-
-    ///Parte Semelhante ao que Wagner Fez
-    Le_Imagem(&Img, nameImage.c_str());
-    strcpy(Img_dest.tipo,Img.tipo);
-
-    ///Calcula novo tamanho
-    t2d.mapDimension(Img.horizontal, Img.vertical);
-    Img_dest.horizontal = t2d.getNewWidth();
-    Img_dest.vertical = t2d.getNewHeight();
-    Img_dest.pixel = alocapixels(3*t2d.getNewWidth(), t2d.getNewHeight());
-
-    ///Relação entre sistemas de matriz e euclidiano;
-    ///Ida
-    wMatrix m2e = t2d.getScale(-1, 1);
-    m2e = t2d.getTranslation(-Img.vertical, 0) * m2e;
-
-    ///Volta
-    wMatrix e2m = t2d.getTranslation(Img.vertical, 0);
-    e2m = t2d.getScale(-1, 1) * e2m;
-
-
-    // imagem não foi lida!!!
-    if ( Img.pixel == NULL )
-        exit(0);
-
-    wMatrix S;
-    S = e2m * S * m2e;
-    S = t2d.getMT().Inv();
-    Escreve_Imagem(Img_dest, file_name.c_str());
 }
 
 int main()
@@ -234,6 +210,7 @@ int main()
     std::string nameImage;
     std::string typeSimpling;
     Transformation2D t2d;
+    bool readImage = false;
     while(true){
         clear_screen();
         std::cout << "\t Geometric Transformations\n\n" << std::endl;
@@ -242,7 +219,7 @@ int main()
         std:: cout << std::endl;
         std::cout << " 2 - Make transformations" << std::endl;
         std::cout <<"\tCurrent transformation matrix:" << std::endl << blue;
-        t2d.getMT().Print("\t");
+        t2d.getMT_Show().Print("\t");
         std::cout << def;
         std::cout << " 3 - Type of sampling";
         if(!typeSimpling.empty()){std::cout << "\n\tCurrent simpling: " << blue << typeSimpling << def;}
@@ -260,7 +237,8 @@ int main()
             switch (option){
                 case '1':
                     std::cout << "You choose 1";
-                    option1(nameImage);
+                    option1(nameImage, Img, t2d);
+                    readImage = true;
                     break;
 
                 case '2':
@@ -274,8 +252,15 @@ int main()
                     break;
 
                 case '4':
-                    std::cout << "You choose 4";
-                    option4(Img, Img_dest, t2d, nameImage);
+                    if(!readImage){
+                        std::cout << " Please, read an image first!";
+                        std::cin.get();
+                        std::cin.sync();
+                    }
+                    else{
+                        std::cout << "You choose 4";
+                        option4(Img, Img_dest, t2d);
+                    }
                     break;
 
                 case '5':
