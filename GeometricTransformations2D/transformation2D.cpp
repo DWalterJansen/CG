@@ -138,4 +138,7 @@ void Transformation2D::compositionReal(const wMatrix &m, char type){
 void Transformation2D::reset(){
     mt_show = mt_show.Eye();
     mt_real = mt_real.Eye();
+    newHeight = 0;
+    newWidth = 0;
+    colorful = false;
 }

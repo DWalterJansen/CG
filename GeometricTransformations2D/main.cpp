@@ -10,6 +10,7 @@
 #include "image.h"
 
 Color::Modifier red(Color::FG_RED);
+Color::Modifier green(Color::FG_GREEN);
 Color::Modifier blue(Color::FG_BLUE);
 Color::Modifier def(Color::FG_DEFAULT);
 
@@ -113,8 +114,9 @@ void option2(Transformation2D &t2d){
                     std::cout << "\t\t Translation in y: ";
                     std::cin >> ty;
                     std::cin.sync();
-                    std::cout << blue;
                     t2d.composition(t2d.getTranslation(tx, ty));
+                    t2d.compositionReal(t2d.getTranslation(tx, ty), 't');
+                    std::cout << blue;
                     t2d.getMT_Show().Print("\t\t");
                     std::cout << def;
                     break;
@@ -128,6 +130,7 @@ void option2(Transformation2D &t2d){
                         std::cin.sync();
                     }while(!(0 <= theta && theta <= 360.0));
                     t2d.composition(t2d.getRotation(theta));
+                    t2d.compositionReal(t2d.getRotation(theta), 'r');
                     std::cout << blue;
                     t2d.getMT_Show().Print("\t\t");
                     std::cout << def;
@@ -143,8 +146,9 @@ void option2(Transformation2D &t2d){
                     std::cout << "\t Scale in y: ";
                     std::cin >> sy;
                     std::cin.sync();
-                    std::cout << blue;
                     t2d.composition(t2d.getScale(sx, sy));
+                    t2d.compositionReal(t2d.getScale(sx, sy), 's');
+                    std::cout << blue;
                     t2d.getMT_Show().Print("\t\t");
                     std::cout << def;
                     break;
@@ -159,8 +163,9 @@ void option2(Transformation2D &t2d){
                     std::cout << "\t Sher in y: ";
                     std::cin >> shy;
                     std::cin.sync();
-                    std::cout << blue;
                     t2d.composition(t2d.getSher(shx, shy));
+                    t2d.compositionReal(t2d.getSher(shx, shy), 'c');
+                    std::cout << blue;
                     t2d.getMT_Show().Print("\t\t");
                     std::cout << def;
                     break;
@@ -260,8 +265,15 @@ int main()
                     break;
 
                 case '2':
-                    std::cout << "You choose 2";
-                    option2(t2d);
+                    if(!readImage){
+                        std::cout << green << " Please, read an image first!" << def;
+                        std::cin.get();
+                        std::cin.sync();
+                    }
+                    else{
+                        std::cout << "You choose 2";
+                        option2(t2d);
+                    }
                     break;
 
                 case '3':
@@ -271,7 +283,7 @@ int main()
 
                 case '4':
                     if(!readImage){
-                        std::cout << " Please, read an image first!";
+                        std::cout << green << " Please, read an image first!" << def;
                         std::cin.get();
                         std::cin.sync();
                     }
