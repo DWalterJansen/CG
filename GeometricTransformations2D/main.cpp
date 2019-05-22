@@ -4,6 +4,7 @@
 ///////////////////////////////////////////////////////////////////
 #include <iostream>
 #include <string>
+#include <vector>
 #include "transformation2D.h"
 #include "colormod.h"
 #include "image.h"
@@ -44,7 +45,7 @@ bool is_float(const std::string& s)
     return !s.empty() && it == s.end();
 }
 
-void option1(std::string &nameImage, Imagem &Img, Transformation2D &t2d){
+void option1(std::string &nameImage, Imagem &Img, Transformation2D &t2d, std::vector< std::vector <char> > &ImgAux){
     clear_screen();
     std::cout << "\tGeometric Transformations\n\n" << std::endl;
     std::cout << " 1 - Read image" << std::endl;
@@ -54,9 +55,25 @@ void option1(std::string &nameImage, Imagem &Img, Transformation2D &t2d){
     std::cin.sync();
     t2d.reset();
     Le_Imagem(&Img, nameImage.c_str());
-    //Devido à transposiçao da matriz na leitura
-    t2d.setNewHeight(3*Img.horizontal);
-    t2d.setNewWidth(Img.vertical);
+
+    std::string imgType (Img.tipo);
+
+    if(imgType.compare(0, 2,"P3") == 0 || imgType.compare(0, 2,"P6") == 0){
+        t2d.setNewHeight(3*Img.horizontal);
+        t2d.setNewWidth(Img.vertical);
+        t2d.setColorful(true);
+    }
+    else{
+        t2d.setNewHeight(Img.horizontal);
+        t2d.setNewWidth(Img.vertical);
+        t2d.setColorful(false);
+    }
+
+    std::cout << "Reading Image...";
+    ImgAux.resize(t2d.getNewHeight());
+    for (int i = 0; i < t2d.getNewHeight(); ++i)
+        ImgAux[i].resize(t2d.getNewHeight());
+
 }
 
 void option2(Transformation2D &t2d){
@@ -207,6 +224,7 @@ void option4(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d){
 int main()
 {
     Imagem Img, Img_dest;
+    std::vector< std::vector <char> > ImgAux;
     std::string nameImage;
     std::string typeSimpling;
     Transformation2D t2d;
@@ -214,7 +232,7 @@ int main()
     while(true){
         clear_screen();
         std::cout << "\t Geometric Transformations\n\n" << std::endl;
-        std::cout << " 1 - Read image";
+        std::cout << " 1 - Read image (Reset transformation matrix)";
         if(!nameImage.empty()){std::cout << "\n\tCurrent image: " << blue << nameImage << def;}
         std:: cout << std::endl;
         std::cout << " 2 - Make transformations" << std::endl;
@@ -237,7 +255,7 @@ int main()
             switch (option){
                 case '1':
                     std::cout << "You choose 1";
-                    option1(nameImage, Img, t2d);
+                    option1(nameImage, Img, t2d, ImgAux);
                     readImage = true;
                     break;
 

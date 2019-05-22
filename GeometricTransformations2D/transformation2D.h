@@ -10,6 +10,7 @@ class Transformation2D{
         wMatrix mt_real;
         long newWidth;
         long newHeight;
+        bool colorful;
 
     public:
         Transformation2D(){
@@ -21,9 +22,11 @@ class Transformation2D{
         //Geters
         long getNewWidth(){return newWidth;}
         long getNewHeight(){return newHeight;}
+        bool getColorful(){return colorful;}
         //Setters
         void setNewWidth(long newWidth){this->newWidth = newWidth;}
         void setNewHeight(long newHeight){this->newHeight = newHeight;}
+        void setColorful(bool colorful){this->colorful = colorful;}
         //translation
         wMatrix getTranslation(double tx, double ty);
         //rotation
@@ -35,6 +38,7 @@ class Transformation2D{
 
         //composição
         void composition(const wMatrix &m);
+        void compositionReal(const wMatrix &m, char type);
         void reset();
         ~Transformation2D(){};
 };
