@@ -51,19 +51,19 @@ void Transformation2D::composition(const wMatrix &m){
 
 void Transformation2D::compositionReal(const wMatrix &m, char type){
     // points like: (x, y, 1)
-    wVector p1(0,0,1);
-    wVector p2(newHeight, 0, 1);
-    wVector p3(0, newWidth, 1);
-    wVector p4(newHeight, newWidth, 1);
+    wVector p1(0, 0, 1);
+    wVector p2(0, newHeight, 1);
+    wVector p3(newWidth, 0, 1);
+    wVector p4(newWidth, newHeight, 1);
 
     double minX, maxX, minY, maxY;
     wMatrix aux = m;
 
     if(type == 't'){//translation
-        if(colorful){ //Cada pixel tem rgb
+        /*if(colorful){ //Cada pixel tem rgb
             aux[0][2] *= 3;
             aux[1][2] *= 3;
-        }
+        }*/
         p1 = aux * p1;
         p2 = aux * p2;
         p3 = aux * p3;
@@ -72,8 +72,8 @@ void Transformation2D::compositionReal(const wMatrix &m, char type){
         maxX = std::max(std::max(p1[0], p2[0]), std::max(p3[0], p4[0]));
         maxY = std::max(std::max(p1[1], p2[1]), std::max(p3[1], p4[1]));
 
-        newHeight = maxX;
-        newWidth = maxY;
+        newHeight = maxY;
+        newWidth = maxX;
         //Atualiza matriz real
         mt_real = aux * mt_real;
     }
@@ -94,8 +94,8 @@ void Transformation2D::compositionReal(const wMatrix &m, char type){
         t[0][2] = -minX;
         t[1][2] = -minY;
 
-        newHeight = int(abs(maxX-minX) + 0.5);
-        newWidth = int(abs(maxY-minY) + 0.5);
+        newHeight = int(abs(maxY-minY) + 0.5);
+        newWidth = int(abs(maxX-minX) + 0.5);
 
         //Atualiza matriz real
         mt_real = aux * mt_real;
@@ -103,12 +103,12 @@ void Transformation2D::compositionReal(const wMatrix &m, char type){
 
     }
     else if(type == 'c'){//shear
-        if(colorful){ //Cada pixel tem rgb
+        /*if(colorful){ //Cada pixel tem rgb
             wMatrix s;
             s.Eye();
             s[0][0] = 3;
             aux = s * aux;
-        }
+        }*/
         p1 = aux * p1;
         p2 = aux * p2;
         p3 = aux * p3;
@@ -125,13 +125,12 @@ void Transformation2D::compositionReal(const wMatrix &m, char type){
         t[0][2] = -minX;
         t[1][2] = -minY;
 
-        newHeight = int(abs(maxX-minX) + 0.5);
-        newWidth = int(abs(maxY-minY) + 0.5);
+        newHeight = int(abs(maxY-minY) + 0.5);
+        newWidth = int(abs(maxX-minX) + 0.5);
 
         //Atualiza matriz real
         mt_real = aux * mt_real;
         mt_real = t * mt_real;
-
     }
 }
 

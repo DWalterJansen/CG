@@ -23,4 +23,4 @@ typedef struct {
 /* --------------------- Declaracao de Funcoes -----------------------*/
 void Le_Imagem(Imagem *Fonte, const char *NomeArq);
 void Escreve_Imagem(Imagem Fonte, const char *NomeArq);
-unsigned char **alocapixels(long width, long height);
+unsigned char **alocapixels(long height, long width);

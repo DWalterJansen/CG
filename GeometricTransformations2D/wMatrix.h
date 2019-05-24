@@ -93,6 +93,7 @@ class wMatrix:public wVector
 
         wMatrix operator/( const double& );
 
+        void Print() const;
         void Print(std::string symbol) const;
 };
 
