@@ -57,13 +57,205 @@ char linear_interpolation(char src1, char src2, int beginX, int x, int endX){
     return (char) ((endX-x)/(endX-beginX))*aux1 + ((x-beginX)/(endX-beginX))*aux2;
 }
 
+void reverseMapColorful(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d, std::string &typeSimpling){
+    wMatrix T;
+    T = t2d.getMT_Real();
+    T = T.Inv();
+    if( typeSimpling.compare("Ponctual") == 0){
+        int i, j;
+        for(i=0; i< Img_dest.horizontal; i++){
+            for( j=0; j< Img_dest.vertical; j++ ){
+                wVector P, Q;
+                P[0] = i;
+                P[1] = j;
+                P[2] = 1;
+                Q = T*P;
+                int x;
+                int y;
+
+                x = int(Q[0]+0.5)*3;
+                y = int(Q[1]+0.5);
+                if (-1 < x && x < Img.horizontal*3 && -1 < y && y < Img.vertical){
+                    Img_dest.pixel[i*3][j] = Img.pixel[int(Q[0]+0.5)*3][int(Q[1]+0.5)];  //banda red
+                }
+                x = int(Q[0]+0.5)*3+1;
+                if (-1 < x && x < Img.horizontal*3 && -1 < y && y < Img.vertical){
+                    Img_dest.pixel[i*3+1][j] = Img.pixel[int(Q[0]+0.5)*3+1][int(Q[1]+0.5)];  //banda green
+                }
+                x = int(Q[0]+0.5)*3+2;
+                if (-1 < x && x < Img.horizontal*3 && -1 < y && y < Img.vertical){
+                    Img_dest.pixel[i*3+2][j] = Img.pixel[int(Q[0]+0.5)*3+2][int(Q[1]+0.5)];  //banda blue
+                }
+            }
+        }
+    }
+    else if (typeSimpling.compare("Bilinear") == 0){
+        int i, j;
+        char a, b;
+        bool existA;
+        bool existB;
+        for(i=0; i< Img_dest.horizontal; i++){
+            for( j=0; j< Img_dest.vertical; j++ ){
+                wVector P, Q;
+                P[0] = i;
+                P[1] = j;
+                P[2] = 1;
+                Q = T*P;
+                int x1, x2, y1, y2; //coords
+
+                int c; // colors RGB
+                for(c=0; c < 3; c++){
+                    existA = false;
+                    existB = false;
+                    x1 = (int) floor(Q[0])*3 + c;
+                    x2 = (int) ceil(Q[0])*3 + c;
+                    y1 = (int) floor(Q[1]);
+                    y2 = (int) ceil(Q[1]);
+
+                    if(-1 < x1 && x1 < Img.horizontal*3 && -1 < y2 && y2 < Img.vertical){
+                        if(-1 < x2 && x2 < Img.horizontal*3 && -1 < y2 && y2 < Img.vertical){
+                            a = linear_interpolation(Img.pixel[x1][y2], Img.pixel[x2][y2], floor(Q[0]), Q[0], ceil(Q[0]));
+                        }
+                        else{
+                            a = Img.pixel[x1][y2];
+                        }
+                        existA = true;
+                    }
+                    else{
+                        if(-1 < x2 && x2 < Img.horizontal*3 && -1 < y2 && y2 < Img.vertical){
+                            a = Img.pixel[x2][y2];
+                            existA = true;
+                        }
+                    }
+
+                    if(-1 < x1 && x1 < Img.horizontal*3 && -1 < y1 && y1 < Img.vertical){
+                        if(-1 < x2 && x2 < Img.horizontal*3 && -1 < y1 && y1 < Img.vertical){
+                            b = linear_interpolation(Img.pixel[x1][y1], Img.pixel[x2][y1], floor(Q[0]), Q[0], ceil(Q[0]));
+                        }
+                        else{
+                            b = Img.pixel[x1][y1];
+                        }
+                        existB = true;
+                    }
+                    else{
+                        if(-1 < x2 && x2 < Img.horizontal*3 && -1 < y1 && y1 < Img.vertical){
+                            b = Img.pixel[x2][y1];
+                            existB = true;
+                        }
+                    }
+
+                    if(existA && existB){
+                        Img_dest.pixel[i*3 + c][j] = linear_interpolation(a, b, floor(Q[1]), Q[1], ceil(Q[1]));
+                    }
+                    else if(existA){
+                        Img_dest.pixel[i*3 + c][j] = a;
+                    }
+                    else if(existB){
+                        Img_dest.pixel[i*3 + c][j] = b;
+                    }
+                }
+            }
+        }
+    }
+}
+
+void reverseMapNotColorful(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d, std::string &typeSimpling){
+    wMatrix T;
+    T = t2d.getMT_Real();
+    T = T.Inv();
+    if( typeSimpling.compare("Ponctual") == 0){
+        int i, j;
+        for(i=0; i< Img_dest.horizontal; i++){
+            for( j=0; j< Img_dest.vertical; j++ ){
+                wVector P, Q;
+                P[0] = i;
+                P[1] = j;
+                P[2] = 1;
+                Q = T*P;
+                int x;
+                int y;
+
+                x = int(Q[0]+0.5);
+                y = int(Q[1]+0.5);
+                if (-1 < x && x < Img.horizontal && -1 < y && y < Img.vertical){
+                    Img_dest.pixel[i][j] = Img.pixel[x][y];
+                }
+            }
+        }
+    }
+    else if (typeSimpling.compare("Bilinear") == 0){;
+        int i, j;
+        char a, b;
+        bool existA;
+        bool existB;
+        for(i=0; i< Img_dest.horizontal; i++){
+            for( j=0; j< Img_dest.vertical; j++ ){
+                wVector P, Q;
+                P[0] = i;
+                P[1] = j;
+                P[2] = 1;
+                Q = T*P;
+                int x1, x2, y1, y2; //coords
+                existA = false;
+                existB = false;
+                x1 = (int) floor(Q[0]);
+                x2 = (int) ceil(Q[0]);
+                y1 = (int) floor(Q[1]);
+                y2 = (int) ceil(Q[1]);
+
+                if(-1 < x1 && x1 < Img.horizontal && -1 < y2 && y2 < Img.vertical){
+                    if(-1 < x2 && x2 < Img.horizontal && -1 < y2 && y2 < Img.vertical){
+                        a = linear_interpolation(Img.pixel[x1][y2], Img.pixel[x2][y2], floor(Q[0]), Q[0], ceil(Q[0]));
+                    }
+                    else{
+                        a = Img.pixel[x1][y2];
+                    }
+                    existA = true;
+                }
+                else{
+                    if(-1 < x2 && x2 < Img.horizontal && -1 < y2 && y2 < Img.vertical){
+                        a = Img.pixel[x2][y2];
+                        existA = true;
+                    }
+                }
+
+                if(-1 < x1 && x1 < Img.horizontal && -1 < y1 && y1 < Img.vertical){
+                    if(-1 < x2 && x2 < Img.horizontal && -1 < y1 && y1 < Img.vertical){
+                        b = linear_interpolation(Img.pixel[x1][y1], Img.pixel[x2][y1], floor(Q[0]), Q[0], ceil(Q[0]));
+                    }
+                    else{
+                        b = Img.pixel[x1][y1];
+                    }
+                    existB = true;
+                }
+                else{
+                    if(-1 < x2 && x2 < Img.horizontal && -1 < y1 && y1 < Img.vertical){
+                        b = Img.pixel[x2][y1];
+                        existB = true;
+                    }
+                }
+
+                if(existA && existB){
+                    Img_dest.pixel[i][j] = linear_interpolation(a, b, floor(Q[1]), Q[1], ceil(Q[1]));
+                }
+                else if(existA){
+                    Img_dest.pixel[i][j] = a;
+                }
+                else if(existB){
+                    Img_dest.pixel[i][j] = b;
+                }
+            }
+        }
+    }
+}
+
 void option1(std::string &nameImage, Imagem &Img, Transformation2D &t2d){
     clear_screen();
     std::cout << "\tGeometric Transformations\n\n" << std::endl;
     std::cout << " 1 - Read image" << std::endl;
-    std::cout << "\t File name to open (.ppm): ";
+    std::cout << "\t File name to open: ";
     std::cin >> nameImage;
-    nameImage = nameImage + ".ppm";
+    //nameImage = nameImage + ".ppm";
     std::cin.sync();
     t2d.reset();
     Le_Imagem(&Img, nameImage.c_str());
@@ -223,14 +415,19 @@ void option4(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d, std::string &
     clear_screen();
     std::cout << "\t Geometric Transformations\n\n" << std::endl;
     std::cout << " 4 - Perform transformation and save new image" << std::endl;
-    std::cout << "\t File name to save (.ppm): ";
+    std::cout << "\t File name to save: ";
     std::string file_name;
     std::cin >> file_name;
-    file_name = file_name + ".ppm";
+    //file_name = file_name + ".ppm";
     std::cin.sync();
 
     // Aloca espaço para a matriz resultado
-    Img_dest.pixel = alocapixels(t2d.getNewWidth()*3, t2d.getNewHeight());
+    if(t2d.getColorful()){
+        Img_dest.pixel = alocapixels(t2d.getNewWidth()*3, t2d.getNewHeight());
+    }
+    else{
+        Img_dest.pixel = alocapixels(t2d.getNewWidth(), t2d.getNewHeight());
+    }
     strcpy(Img_dest.tipo,Img.tipo);
     Img_dest.horizontal = t2d.getNewWidth();
     Img_dest.vertical = t2d.getNewHeight();
@@ -239,109 +436,11 @@ void option4(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d, std::string &
     if ( Img.pixel == NULL )
         exit(0);
 
-    wMatrix T;
-    T = t2d.getMT_Real();
-    T = T.Inv();
-    if( typeSimpling.compare("Ponctual") == 0){
-        std::cout << "Ponctual";
-        std::cin.get();
-        int i, j;
-        for(i=0; i< Img_dest.horizontal; i++){
-            for( j=0; j< Img_dest.vertical; j++ ){
-                wVector P, Q;
-                P[0] = i;
-                P[1] = j;
-                P[2] = 1;
-                Q = T*P;
-                int x;
-                int y;
+    if(t2d.getColorful())
+        reverseMapColorful(Img, Img_dest, t2d, typeSimpling);
+    else
+        reverseMapNotColorful(Img, Img_dest, t2d, typeSimpling);
 
-                x = int(Q[0]+0.5)*3;
-                y = int(Q[1]+0.5);
-                if (-1 < x && x < Img.horizontal*3 && -1 < y && y < Img.vertical){
-                    Img_dest.pixel[i*3][j] = Img.pixel[int(Q[0]+0.5)*3][int(Q[1]+0.5)];  //banda red
-                }
-                x = int(Q[0]+0.5)*3+1;
-                if (-1 < x && x < Img.horizontal*3 && -1 < y && y < Img.vertical){
-                    Img_dest.pixel[i*3+1][j] = Img.pixel[int(Q[0]+0.5)*3+1][int(Q[1]+0.5)];  //banda green
-                }
-                x = int(Q[0]+0.5)*3+2;
-                if (-1 < x && x < Img.horizontal*3 && -1 < y && y < Img.vertical){
-                    Img_dest.pixel[i*3+2][j] = Img.pixel[int(Q[0]+0.5)*3+2][int(Q[1]+0.5)];  //banda blue
-                }
-            }
-        }
-    }
-    else if (typeSimpling.compare("Bilinear") == 0){
-        std::cout << "Bilinear";
-        std::cin.get();
-        int i, j;
-        char a, b;
-        bool existA;
-        bool existB;
-        for(i=0; i< Img_dest.horizontal; i++){
-            for( j=0; j< Img_dest.vertical; j++ ){
-                wVector P, Q;
-                P[0] = i;
-                P[1] = j;
-                P[2] = 1;
-                Q = T*P;
-                int x1, x2, y1, y2; //coords
-
-                int c; // colors RGB
-                for(c=0; c < 3; c++){
-                    existA = false;
-                    existB = false;
-                    x1 = (int) floor(Q[0])*3 + c;
-                    x2 = (int) ceil(Q[0])*3 + c;
-                    y1 = (int) floor(Q[1]);
-                    y2 = (int) ceil(Q[1]);
-
-                    if(-1 < x1 && x1 < Img.horizontal*3 && -1 < y2 && y2 < Img.vertical){
-                        if(-1 < x2 && x2 < Img.horizontal*3 && -1 < y2 && y2 < Img.vertical){
-                            a = linear_interpolation(Img.pixel[x1][y2], Img.pixel[x2][y2], floor(Q[0]), Q[0], ceil(Q[0]));
-                        }
-                        else{
-                            a = Img.pixel[x1][y2];
-                        }
-                        existA = true;
-                    }
-                    else{
-                        if(-1 < x2 && x2 < Img.horizontal*3 && -1 < y2 && y2 < Img.vertical){
-                            a = Img.pixel[x2][y2];
-                            existA = true;
-                        }
-                    }
-
-                    if(-1 < x1 && x1 < Img.horizontal*3 && -1 < y1 && y1 < Img.vertical){
-                        if(-1 < x2 && x2 < Img.horizontal*3 && -1 < y1 && y1 < Img.vertical){
-                            b = linear_interpolation(Img.pixel[x1][y1], Img.pixel[x2][y1], floor(Q[0]), Q[0], ceil(Q[0]));
-                        }
-                        else{
-                            b = Img.pixel[x1][y1];
-                        }
-                        existB = true;
-                    }
-                    else{
-                        if(-1 < x2 && x2 < Img.horizontal*3 && -1 < y1 && y1 < Img.vertical){
-                            b = Img.pixel[x2][y1];
-                            existB = true;
-                        }
-                    }
-
-                    if(existA && existB){
-                        Img_dest.pixel[i*3 + c][j] = linear_interpolation(a, b, floor(Q[1]), Q[1], ceil(Q[1]));
-                    }
-                    else if(existA){
-                        Img_dest.pixel[i*3 + c][j] = a;
-                    }
-                    else if(existB){
-                        Img_dest.pixel[i*3 + c][j] = b;
-                    }
-                }
-            }
-        }
-    }
     Escreve_Imagem(Img_dest, file_name.c_str());
     std::cout << "\n Press any key to return to the home menu...";
     std::cin.get();
