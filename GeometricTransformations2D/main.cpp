@@ -3,6 +3,7 @@
 //  Programadores: Iarah Almeida Gonçalvez; David Walter Jansen
 ///////////////////////////////////////////////////////////////////
 #include <iostream>
+#include <cmath>
 #include <string>
 #include <vector>
 #include "transformation2D.h"
@@ -44,6 +45,16 @@ bool is_float(const std::string& s)
         ++it;
     }
     return !s.empty() && it == s.end();
+}
+
+char linear_interpolation(char src1, char src2, int beginX, int x, int endX){
+    int aux1 = (int) src1;
+    int aux2 = (int) src2;
+
+    if((endX - beginX) == 0){
+        return src1;
+    }
+    return (char) ((endX-x)/(endX-beginX))*aux1 + ((x-beginX)/(endX-beginX))*aux2;
 }
 
 void option1(std::string &nameImage, Imagem &Img, Transformation2D &t2d){
@@ -98,7 +109,7 @@ void option2(Transformation2D &t2d){
             std::cin.sync();
             switch (code){
                 case 'a':
-                    std::cout << "\t\t You choose Translation" << std::endl;
+                    std::cout << "\t\t You've chosen Translation" << std::endl;
                     double tx;
                     double ty;
                     std::cout << "\t\t Translation in x: ";
@@ -115,10 +126,10 @@ void option2(Transformation2D &t2d){
                     break;
 
                 case 'b':
-                    std::cout << "\t You choose Rotation" << std::endl;
+                    std::cout << "\t You've chosen Rotation" << std::endl;
                     double theta;
                     do{
-                        std::cout << "\t Enter the value of the angle (0.0 - 360.0): ";
+                        std::cout << "\t Enter the angle value (0.0 - 360.0): ";
                         std::cin >> theta;
                         std::cin.sync();
                     }while(!(0 <= theta && theta <= 360.0));
@@ -130,7 +141,7 @@ void option2(Transformation2D &t2d){
                     break;
 
                 case 'c':
-                    std::cout << "\t You choose Scale" << std::endl;
+                    std::cout << "\t You've chosen Scale" << std::endl;
                     double sx;
                     double sy;
                     std::cout << "\t Scale in x: ";
@@ -147,7 +158,7 @@ void option2(Transformation2D &t2d){
                     break;
 
                 case 'd':
-                    std::cout << "\t You choose Shear" << std::endl;
+                    std::cout << "\t You've chosen Shear" << std::endl;
                     double shx;
                     double shy;
                     std::cout << "\t Sher in x: ";
@@ -177,24 +188,24 @@ void option2(Transformation2D &t2d){
 void option3(std::string &typeSimpling){
     clear_screen();
     std::cout << "\t Geometric Transformations\n\n" << std::endl;
-    std::cout << " 3 - Type of sampling" << std::endl;
+    std::cout << " 3 - Sampling Type" << std::endl;
     std::cout << "\t a - Ponctual" << std::endl;
     std::cout << "\t b - Bilinear" << std::endl;
 
     char code;
     do{
-        std::cout << "\n Enter the letter code for the type of sampling: ";
+        std::cout << "\n Enter the letter code for the sampling type: ";
         std::cin >> code;
         std::cin.sync();
 
         switch (code){
             case 'a':
-                std::cout << "\t\t You choose Punctual";
+                std::cout << "\t\t You've chosen Punctual";
                 typeSimpling = "Ponctual";
                 break;
 
             case 'b':
-                std::cout << "\t\t You choose Bilinear";
+                std::cout << "\t\t You've chosen Bilinear";
                 typeSimpling = "Bilinear";
                 break;
 
@@ -231,30 +242,103 @@ void option4(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d, std::string &
     wMatrix T;
     T = t2d.getMT_Real();
     T = T.Inv();
+    if( typeSimpling.compare("Ponctual") == 0){
+        std::cout << "Ponctual";
+        std::cin.get();
+        int i, j;
+        for(i=0; i< Img_dest.horizontal; i++){
+            for( j=0; j< Img_dest.vertical; j++ ){
+                wVector P, Q;
+                P[0] = i;
+                P[1] = j;
+                P[2] = 1;
+                Q = T*P;
+                int x;
+                int y;
 
-    int i, j;
-    for(i=0; i< Img_dest.horizontal; i++){
-        for( j=0; j< Img_dest.vertical; j++ ){
-            wVector P, Q;
-            P[0] = i;
-            P[1] = j;
-            P[2] = 1;
-            Q = T*P;
-            int x;
-            int y;
+                x = int(Q[0]+0.5)*3;
+                y = int(Q[1]+0.5);
+                if (-1 < x && x < Img.horizontal*3 && -1 < y && y < Img.vertical){
+                    Img_dest.pixel[i*3][j] = Img.pixel[int(Q[0]+0.5)*3][int(Q[1]+0.5)];  //banda red
+                }
+                x = int(Q[0]+0.5)*3+1;
+                if (-1 < x && x < Img.horizontal*3 && -1 < y && y < Img.vertical){
+                    Img_dest.pixel[i*3+1][j] = Img.pixel[int(Q[0]+0.5)*3+1][int(Q[1]+0.5)];  //banda green
+                }
+                x = int(Q[0]+0.5)*3+2;
+                if (-1 < x && x < Img.horizontal*3 && -1 < y && y < Img.vertical){
+                    Img_dest.pixel[i*3+2][j] = Img.pixel[int(Q[0]+0.5)*3+2][int(Q[1]+0.5)];  //banda blue
+                }
+            }
+        }
+    }
+    else if (typeSimpling.compare("Bilinear") == 0){
+        std::cout << "Bilinear";
+        std::cin.get();
+        int i, j;
+        char a, b;
+        bool existA;
+        bool existB;
+        for(i=0; i< Img_dest.horizontal; i++){
+            for( j=0; j< Img_dest.vertical; j++ ){
+                wVector P, Q;
+                P[0] = i;
+                P[1] = j;
+                P[2] = 1;
+                Q = T*P;
+                int x1, x2, y1, y2; //coords
 
-            x = int(Q[0]+0.5)*3;
-            y = int(Q[1]+0.5);
-            if (-1 < x && x < Img.horizontal*3 && -1 < y && y < Img.vertical){
-                Img_dest.pixel[i*3][j] = Img.pixel[int(Q[0]+0.5)*3][int(Q[1]+0.5)];  //banda red
-            }
-            x = int(Q[0]+0.5)*3+1;
-            if (-1 < x && x < Img.horizontal*3 && -1 < y && y < Img.vertical){
-                Img_dest.pixel[i*3+1][j] = Img.pixel[int(Q[0]+0.5)*3+1][int(Q[1]+0.5)];  //banda green
-            }
-            x = int(Q[0]+0.5)*3+2;
-            if (-1 < x && x < Img.horizontal*3 && -1 < y && y < Img.vertical){
-                Img_dest.pixel[i*3+2][j] = Img.pixel[int(Q[0]+0.5)*3+2][int(Q[1]+0.5)];  //banda blue
+                int c; // colors RGB
+                for(c=0; c < 3; c++){
+                    existA = false;
+                    existB = false;
+                    x1 = (int) floor(Q[0])*3 + c;
+                    x2 = (int) ceil(Q[0])*3 + c;
+                    y1 = (int) floor(Q[1]);
+                    y2 = (int) ceil(Q[1]);
+
+                    if(-1 < x1 && x1 < Img.horizontal*3 && -1 < y2 && y2 < Img.vertical){
+                        if(-1 < x2 && x2 < Img.horizontal*3 && -1 < y2 && y2 < Img.vertical){
+                            a = linear_interpolation(Img.pixel[x1][y2], Img.pixel[x2][y2], floor(Q[0]), Q[0], ceil(Q[0]));
+                        }
+                        else{
+                            a = Img.pixel[x1][y2];
+                        }
+                        existA = true;
+                    }
+                    else{
+                        if(-1 < x2 && x2 < Img.horizontal*3 && -1 < y2 && y2 < Img.vertical){
+                            a = Img.pixel[x2][y2];
+                            existA = true;
+                        }
+                    }
+
+                    if(-1 < x1 && x1 < Img.horizontal*3 && -1 < y1 && y1 < Img.vertical){
+                        if(-1 < x2 && x2 < Img.horizontal*3 && -1 < y1 && y1 < Img.vertical){
+                            b = linear_interpolation(Img.pixel[x1][y1], Img.pixel[x2][y1], floor(Q[0]), Q[0], ceil(Q[0]));
+                        }
+                        else{
+                            b = Img.pixel[x1][y1];
+                        }
+                        existB = true;
+                    }
+                    else{
+                        if(-1 < x2 && x2 < Img.horizontal*3 && -1 < y1 && y1 < Img.vertical){
+                            b = Img.pixel[x2][y1];
+                            existB = true;
+                        }
+                    }
+
+                    if(existA && existB){
+                        Img_dest.pixel[i*3 + c][j] = linear_interpolation(a, b, floor(Q[1]), Q[1], ceil(Q[1]));
+                    }
+                    else if(existA){
+                        Img_dest.pixel[i*3 + c][j] = a;
+                    }
+                    else if(existB){
+                        Img_dest.pixel[i*3 + c][j] = b;
+                    }
+                }
             }
         }
     }
@@ -281,7 +365,7 @@ int main()
         std::cout <<"\tCurrent transformation matrix:" << std::endl << blue;
         t2d.getMT_Show().Print("\t");
         std::cout << def;
-        std::cout << " 3 - Type of sampling";
+        std::cout << " 3 - Sampling Type";
         if(!typeSimpling.empty()){std::cout << "\n\tCurrent simpling: " << blue << typeSimpling << def;}
         std:: cout << std::endl;
         std::cout << " 4 - Perform transformation and save new image" << std::endl;
@@ -296,7 +380,7 @@ int main()
 
             switch (option){
                 case '1':
-                    std::cout << "You choose 1";
+                    std::cout << "You've chosen 1";
                     option1(nameImage, Img, t2d);
                     readImage = true;
                     break;
@@ -308,13 +392,13 @@ int main()
                         std::cin.sync();
                     }
                     else{
-                        std::cout << "You choose 2";
+                        std::cout << "You've chosen 2";
                         option2(t2d);
                     }
                     break;
 
                 case '3':
-                    std::cout << "You choose 3";
+                    std::cout << "You've chosen 3";
                     option3(typeSimpling);
                     break;
 
@@ -325,12 +409,12 @@ int main()
                         std::cin.sync();
                     }
                     else if(typeSimpling.empty()){
-                        std::cout << green << " Please, select an type of simpling!" << def;
+                        std::cout << green << " Please, select a simpling type!" << def;
                         std::cin.get();
                         std::cin.sync();
                     }
                     else{
-                        std::cout << "You choose 4";
+                        std::cout << "You've chosen 4";
                         option4(Img, Img_dest, t2d, typeSimpling);
                     }
                     break;

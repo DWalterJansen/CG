@@ -12,8 +12,9 @@
 	<iostream>
 	<string>
 
-1558664351 source:c:\users\david\documents\github\cg\geometrictransformations2d\main.cpp
+1558803655 source:c:\users\david\documents\github\cg\geometrictransformations2d\main.cpp
 	<iostream>
+	<cmath>
 	<string>
 	<vector>
 	"transformation2D.h"
@@ -40,7 +41,7 @@
 	<string>
 	<iostream>
 
-1558663768 source:c:\users\david\documents\github\cg\geometrictransformations2d\transformation2d.cpp
+1558667573 source:c:\users\david\documents\github\cg\geometrictransformations2d\transformation2d.cpp
 	"transformation2D.h"
 	<iostream>
 	<cmath>
