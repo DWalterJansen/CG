@@ -252,7 +252,7 @@ void reverseMapNotColorful(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d,
 void option1(std::string &nameImage, Imagem &Img, Transformation2D &t2d){
     clear_screen();
     std::cout << "\tGeometric Transformations\n\n" << std::endl;
-    std::cout << " 1 - Read image" << std::endl;
+    std::cout << " 1 - Read image (add .ppm or .pgm)" << std::endl;
     std::cout << "\t File name to open: ";
     std::cin >> nameImage;
     //nameImage = nameImage + ".ppm";
@@ -418,16 +418,18 @@ void option4(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d, std::string &
     std::cout << "\t File name to save: ";
     std::string file_name;
     std::cin >> file_name;
-    //file_name = file_name + ".ppm";
     std::cin.sync();
 
     // Aloca espaço para a matriz resultado
     if(t2d.getColorful()){
         Img_dest.pixel = alocapixels(t2d.getNewWidth()*3, t2d.getNewHeight());
+        file_name = file_name + ".ppm";
     }
     else{
         Img_dest.pixel = alocapixels(t2d.getNewWidth(), t2d.getNewHeight());
+        file_name = file_name + ".pgm";
     }
+
     strcpy(Img_dest.tipo,Img.tipo);
     Img_dest.horizontal = t2d.getNewWidth();
     Img_dest.vertical = t2d.getNewHeight();
@@ -436,6 +438,7 @@ void option4(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d, std::string &
     if ( Img.pixel == NULL )
         exit(0);
 
+    std::cout << "\n Saving..";
     if(t2d.getColorful())
         reverseMapColorful(Img, Img_dest, t2d, typeSimpling);
     else
