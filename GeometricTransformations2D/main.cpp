@@ -24,15 +24,13 @@ void clear_screen(){
     #endif
 }
 
-bool is_number(const std::string& s)
-{
+bool is_number(const std::string& s){
     std::string::const_iterator it = s.begin();
     while (it != s.end() && std::isdigit(*it)) ++it;
     return !s.empty() && it == s.end();
 }
 
-bool is_float(const std::string& s)
-{
+bool is_float(const std::string& s){
     std::string::const_iterator it = s.begin();
     int accumulator = 0;
     while (it != s.end()){
@@ -269,8 +267,8 @@ void option1(std::string &nameImage, Imagem &Img, Transformation2D &t2d){
         t2d.setColorful(false);
     }
 
-    t2d.setNewHeight(Img.vertical);
-    t2d.setNewWidth(Img.horizontal);
+    t2d.setInitHeight(Img.vertical);
+    t2d.setInitWidth(Img.horizontal);
 }
 
 void option2(Transformation2D &t2d){
@@ -284,6 +282,7 @@ void option2(Transformation2D &t2d){
 
     int number;
     std::string s;
+    std::string aux_input;
     do{
         std::cout << "\n Give a number of transformations: ";
         std::cin >> s;
@@ -301,17 +300,25 @@ void option2(Transformation2D &t2d){
             std::cin.sync();
             switch (code){
                 case 'a':
-                    std::cout << "\t\t You've chosen Translation" << std::endl;
+                    std::cout << "\t You've chosen Translation" << std::endl;
                     double tx;
                     double ty;
-                    std::cout << "\t\t Translation in x: ";
-                    std::cin >> tx;
-                    std::cin.sync();
-                    std::cout << "\t\t Translation in y: ";
-                    std::cin >> ty;
-                    std::cin.sync();
+                    do{
+                        std::cout << "\t Translation in x: ";
+                        std::cin >> aux_input;
+                        std::cin.clear();
+                        fflush(stdin);
+                    }while(!is_float(aux_input));
+                    tx = std::stod(aux_input);
+                    do{
+                        std::cout << "\t Translation in y: ";
+                        std::cin >> aux_input;
+                        std::cin.clear();
+                        fflush(stdin);
+                    }while(!is_float(aux_input));
+                    ty = std::stod(aux_input);
+
                     t2d.composition(t2d.getTranslation(tx, ty));
-                    t2d.compositionReal(t2d.getTranslation(tx, ty), 't');
                     std::cout << blue;
                     t2d.getMT_Show().Print("\t\t");
                     std::cout << def;
@@ -322,11 +329,16 @@ void option2(Transformation2D &t2d){
                     double theta;
                     do{
                         std::cout << "\t Enter the angle value (0.0 - 360.0): ";
-                        std::cin >> theta;
-                        std::cin.sync();
-                    }while(!(0 <= theta && theta <= 360.0));
+                        std::cin >> aux_input;
+                        std::cin.clear();
+                        fflush(stdin);
+                        if(is_float(aux_input)){
+                            theta = std::stod(aux_input);
+                            if(0 <= theta && theta <= 360.0)
+                                break;
+                        }
+                    }while(true);
                     t2d.composition(t2d.getRotation(theta));
-                    t2d.compositionReal(t2d.getRotation(theta), 'r');
                     std::cout << blue;
                     t2d.getMT_Show().Print("\t\t");
                     std::cout << def;
@@ -336,14 +348,22 @@ void option2(Transformation2D &t2d){
                     std::cout << "\t You've chosen Scale" << std::endl;
                     double sx;
                     double sy;
-                    std::cout << "\t Scale in x: ";
-                    std::cin >> sx;
-                    std::cin.sync();
-                    std::cout << "\t Scale in y: ";
-                    std::cin >> sy;
-                    std::cin.sync();
+                    do{
+                        std::cout << "\t Scale in x: ";
+                        std::cin >> aux_input;
+                        std::cin.clear();
+                        fflush(stdin);
+                    }while(!is_float(aux_input));
+                    sx = std::stod(aux_input);
+                    do{
+                        std::cout << "\t Scale in y: ";
+                        std::cin >> aux_input;
+                        std::cin.clear();
+                        fflush(stdin);
+                    }while(!is_float(aux_input));
+                    sy = std::stod(aux_input);
+
                     t2d.composition(t2d.getScale(sx, sy));
-                    t2d.compositionReal(t2d.getScale(sx, sy), 's');
                     std::cout << blue;
                     t2d.getMT_Show().Print("\t\t");
                     std::cout << def;
@@ -353,14 +373,22 @@ void option2(Transformation2D &t2d){
                     std::cout << "\t You've chosen Shear" << std::endl;
                     double shx;
                     double shy;
-                    std::cout << "\t Sher in x: ";
-                    std::cin >> shx;
-                    std::cin.sync();
-                    std::cout << "\t Sher in y: ";
-                    std::cin >> shy;
-                    std::cin.sync();
+                    do{
+                        std::cout << "\t Shear in x: ";
+                        std::cin >> aux_input;
+                        std::cin.clear();
+                        fflush(stdin);
+                    }while(!is_float(aux_input));
+                    shx = std::stod(aux_input);
+                    do{
+                        std::cout << "\t Shear in y: ";
+                        std::cin >> aux_input;
+                        std::cin.clear();
+                        fflush(stdin);
+                    }while(!is_float(aux_input));
+                    shy = std::stod(aux_input);
+
                     t2d.composition(t2d.getSher(shx, shy));
-                    t2d.compositionReal(t2d.getSher(shx, shy), 'c');
                     std::cout << blue;
                     t2d.getMT_Show().Print("\t\t");
                     std::cout << def;
@@ -420,6 +448,10 @@ void option4(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d, std::string &
     std::cin >> file_name;
     std::cin.sync();
 
+    //Matriz de transformação para reposicionamento da imagem
+    t2d.resetMT_Real();
+    t2d.compositionReal(t2d.getMT_Show());
+
     // Aloca espaço para a matriz resultado
     if(t2d.getColorful()){
         Img_dest.pixel = alocapixels(t2d.getNewWidth()*3, t2d.getNewHeight());
@@ -438,7 +470,7 @@ void option4(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d, std::string &
     if ( Img.pixel == NULL )
         exit(0);
 
-    std::cout << "\n Saving..";
+    std::cout << "\n Saving...";
     if(t2d.getColorful())
         reverseMapColorful(Img, Img_dest, t2d, typeSimpling);
     else
@@ -450,8 +482,7 @@ void option4(Imagem &Img, Imagem &Img_dest, Transformation2D &t2d, std::string &
     std::cin.sync();
 }
 
-int main()
-{
+int main(){
     Imagem Img, Img_dest;
     std::string nameImage;
     std::string typeSimpling;

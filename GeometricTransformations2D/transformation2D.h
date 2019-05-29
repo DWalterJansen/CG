@@ -8,6 +8,8 @@ class Transformation2D{
         //Matriz para as composição de transformação
         wMatrix mt_show;
         wMatrix mt_real;
+        long initWidth;
+        long initHeight;
         long newWidth;
         long newHeight;
         bool colorful;
@@ -24,8 +26,8 @@ class Transformation2D{
         long getNewHeight(){return newHeight;}
         bool getColorful(){return colorful;}
         //Setters
-        void setNewWidth(long newWidth){this->newWidth = newWidth;}
-        void setNewHeight(long newHeight){this->newHeight = newHeight;}
+        void setInitWidth(long initWidth){this->initWidth = initWidth;}
+        void setInitHeight(long initHeight){this->initHeight = initHeight;}
         void setColorful(bool colorful){this->colorful = colorful;}
         //translation
         wMatrix getTranslation(double tx, double ty);
@@ -38,8 +40,9 @@ class Transformation2D{
 
         //composição
         void composition(const wMatrix &m);
-        void compositionReal(const wMatrix &m, char type);
+        void compositionReal(const wMatrix &m);
         void reset();
+        void resetMT_Real();
         ~Transformation2D(){};
 };
 
