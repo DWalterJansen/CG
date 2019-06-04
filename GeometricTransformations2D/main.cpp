@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////
 //  Trabalho prático de Computação Gráfica.
-//  Programadores: Iarah Almeida Gonçalves; David Walter Jansen
+//  Programadores: Iarah Gonçalves de Almeida; David Walter Jansen
 ///////////////////////////////////////////////////////////////////
 #include <iostream>
 #include <cmath>
